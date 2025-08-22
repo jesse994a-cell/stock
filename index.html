@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> J和境.2025</title>
+    <title>Jesse房貸試算</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -412,25 +412,253 @@
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
+            body {
+                padding: 10px;
             }
             
-            .year-row {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 10px;
+            .container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px 15px;
+            }
+            
+            .input-panel {
+                padding: 20px 15px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
             }
             
             .stock-config {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stock-card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .stock-name {
+                font-size: 1.2rem;
             }
             
             .stock-params {
                 grid-template-columns: 1fr;
+                gap: 8px;
             }
             
-            .stock-card {
-                margin-bottom: 15px;
+            .param-group label {
+                font-size: 0.85rem;
+            }
+            
+            .param-group input {
+                padding: 10px;
+                font-size: 1rem;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .summary-card {
+                padding: 15px;
+            }
+            
+            .summary-card h3 {
+                font-size: 0.8rem;
+            }
+            
+            .summary-card .value {
+                font-size: 1.4rem;
+            }
+            
+            .table-container {
+                margin-bottom: 20px;
+            }
+            
+            .table-header {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
+            
+            .table-content {
+                padding: 15px;
+            }
+            
+            .year-summary-row {
+                grid-template-columns: 2fr 1fr;
+                gap: 10px;
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .year-summary-row {
+                display: block;
+                padding: 15px;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                background: white;
+            }
+            
+            .year-summary-row.header {
+                display: none;
+            }
+            
+            .year-summary-mobile {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            
+            .year-summary-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                font-size: 0.85rem;
+                color: #666;
+            }
+            
+            .monthly-detail-header {
+                display: none;
+            }
+            
+            .monthly-detail-row {
+                display: block;
+                padding: 12px;
+                margin-bottom: 8px;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+                background: white;
+                font-size: 0.85rem;
+            }
+            
+            .monthly-detail-row.dividend-month {
+                background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+                border-color: #28a745;
+            }
+            
+            .monthly-row-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
+            
+            .monthly-stocks-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .stock-dividend-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 4px 8px;
+                background: #f8f9fa;
+                border-radius: 4px;
+                font-size: 0.8rem;
+            }
+            
+            .stock-dividend-item.has-dividend {
+                background: #d4edda;
+                color: #155724;
+                font-weight: bold;
+            }
+            
+            .monthly-total {
+                text-align: center;
+                padding: 6px;
+                background: #e9ecef;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            
+            .year-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                padding: 10px 0;
+                font-size: 0.85rem;
+            }
+            
+            .year-row > div:nth-child(n+3) {
+                display: none;
+            }
+            
+            .year-row.header {
+                grid-template-columns: 1fr 1fr;
+                padding: 12px 15px;
+                margin: -15px -15px 15px -15px;
+            }
+            
+            .year-row.header > div:nth-child(n+3) {
+                display: none;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .year-summary-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .year-summary-row.header {
+                grid-template-columns: 1fr;
+            }
+            
+            .monthly-detail-header {
+                grid-template-columns: 1fr 1fr;
+                text-align: center;
+            }
+            
+            .monthly-detail-header > div:nth-child(n+3) {
+                display: none;
+            }
+            
+            .monthly-detail-row {
+                grid-template-columns: 1fr 1fr;
+                text-align: center;
+            }
+            
+            .monthly-detail-row > div:nth-child(n+3) {
+                display: none;
             }
         }
     </style>
@@ -438,8 +666,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-chart-line"></i> J試算</h1>
-            <p>十年計畫</p>
+            <h1><i class="fas fa-chart-line"></i> Jesse房貸試算</h1>
+            <p>透過股票配息來加速償還房貸，實現財務自由</p>
         </div>
 
         <div class="main-content">
@@ -479,11 +707,11 @@
                             <div class="stock-params">
                                 <div class="param-group">
                                     <label for="initial0056">初始持股 (張)</label>
-                                    <input type="number" id="initial0056" value="100" step="1" min="0">
+                                    <input type="number" id="initial0056" value="35" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="monthly0056">每月購買 (張)</label>
-                                    <input type="number" id="monthly0056" value="2" step="1" min="0">
+                                    <input type="number" id="monthly0056" value="1" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price0056">目前股價 (元)</label>
@@ -495,7 +723,7 @@
                                 </div>
                                 <div class="param-group">
                                     <label for="div0056">季配息 (元/張)</label>
-                                    <input type="number" id="div0056" value="800" step="1" min="0">
+                                    <input type="number" id="div0056" value="866" step="1" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">
@@ -512,15 +740,15 @@
                             <div class="stock-params">
                                 <div class="param-group">
                                     <label for="initial00878">初始持股 (張)</label>
-                                    <input type="number" id="initial00878" value="200" step="1" min="0">
+                                    <input type="number" id="initial00878" value="0" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="monthly00878">每月購買 (張)</label>
-                                    <input type="number" id="monthly00878" value="3" step="1" min="0">
+                                    <input type="number" id="monthly00878" value="0" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price00878">目前股價 (元)</label>
-                                    <input type="number" id="price00878" value="20.4" step="0.1" min="0">
+                                    <input type="number" id="price00878" value="21" step="0.1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="growth00878">年漲幅 (%)</label>
@@ -528,7 +756,7 @@
                                 </div>
                                 <div class="param-group">
                                     <label for="div00878">季配息 (元/張)</label>
-                                    <input type="number" id="div00878" value="350" step="1" min="0">
+                                    <input type="number" id="div00878" value="450" step="1" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">
@@ -578,11 +806,11 @@
                             <div class="stock-params">
                                 <div class="param-group">
                                     <label for="initial00919">初始持股 (張)</label>
-                                    <input type="number" id="initial00919" value="150" step="1" min="0">
+                                    <input type="number" id="initial00919" value="0" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="monthly00919">每月購買 (張)</label>
-                                    <input type="number" id="monthly00919" value="3" step="1" min="0">
+                                    <input type="number" id="monthly00919" value="0" step="1" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price00919">目前股價 (元)</label>
@@ -594,7 +822,7 @@
                                 </div>
                                 <div class="param-group">
                                     <label for="div00919">季配息 (元/張)</label>
-                                    <input type="number" id="div00919" value="500" step="1" min="0">
+                                    <input type="number" id="div00919" value="700" step="1" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">

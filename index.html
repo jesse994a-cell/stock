@@ -505,13 +505,6 @@
             }
             
             .year-summary-row {
-                grid-template-columns: 2fr 1fr;
-                gap: 10px;
-                padding: 12px 10px;
-                font-size: 0.9rem;
-            }
-            
-            .year-summary-row {
                 display: block;
                 padding: 15px;
                 border: 1px solid #e9ecef;
@@ -597,24 +590,41 @@
             }
             
             .year-row {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                padding: 10px 0;
+                display: block;
+                padding: 12px;
+                margin-bottom: 8px;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+                background: white;
                 font-size: 0.85rem;
             }
             
-            .year-row > div:nth-child(n+3) {
-                display: none;
-            }
-            
             .year-row.header {
-                grid-template-columns: 1fr 1fr;
-                padding: 12px 15px;
-                margin: -15px -15px 15px -15px;
+                display: none;
             }
             
-            .year-row.header > div:nth-child(n+3) {
-                display: none;
+            .year-row-mobile {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
+            
+            .year-details-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                font-size: 0.8rem;
+                color: #666;
+            }
+            
+            .year-detail-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 4px 8px;
+                background: #f8f9fa;
+                border-radius: 4px;
             }
             
             .btn {

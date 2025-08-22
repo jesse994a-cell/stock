@@ -379,74 +379,102 @@ class MortgageCalculator {
         let html = `
             <div class="year-row header">
                 <div>年份</div>
-                <div>本金</div>
-                <div>利息</div>
-                <div>配息收入</div>
-                <div>股票投資</div>
-                <div>剩餘本金</div>
-                <div>持股總數</div>
-                <div>股票價值</div>
+                <div>剩餘本金 (萬元)</div>
+                <div>年利息 (萬元)</div>
+                <div>年本金 (萬元)</div>
+                <div>年配息 (萬元)</div>
+                <div>額外還款 (萬元)</div>
+                <div>實際還款 (萬元)</div>
+                <div>進度</div>
             </div>
         `;
 
-        // 按年度匯總數據
-        const yearlyData = {};
-        results.forEach(result => {
-            if (!yearlyData[result.year]) {
-                yearlyData[result.year] = {
-                    principal: 0,
-                    interest: 0,
-                    dividend: 0,
-                    stockInvestment: 0,
-                    lastBalance: 0,
-                    lastStocks: {},
-                    lastStockPrices: {},
-                    totalDividend: 0
-                };
-            }
-            
-            const yearly = yearlyData[result.year];
-            yearly.principal += result.principalPayment;
-            yearly.interest += result.interestPayment;
-            yearly.dividend += result.totalDividend;
-            yearly.stockInvestment += result.monthlyStockCost;
-            yearly.lastBalance = result.remainingBalance;
-            yearly.lastStocks = result.stocks;
-            yearly.lastStockPrices = result.stockPrices;
-            yearly.totalDividend += result.totalDividend;
-        });
+        let totalInterest = 0;
+        let totalPrincipal = 0;
+        let totalDividend = 0;
+        let totalExtraPayment = 0;
 
-        // 生成年度摘要行
-        Object.keys(yearlyData).forEach(year => {
-            const data = yearlyData[year];
-            
-            // 計算股票總價值
-            let totalStockValue = 0;
-            let totalShares = 0;
-            Object.keys(data.lastStocks).forEach(stock => {
-                const shares = data.lastStocks[stock];
-                const price = data.lastStockPrices[stock];
-                totalShares += shares;
-                totalStockValue += shares * price * 1000; // 每張1000股
-            });
+        results.forEach(result => {
+            totalInterest += result.yearInterest;
+            totalPrincipal += result.yearPrincipal;
+            totalDividend += result.totalDividend;
+            totalExtraPayment += result.extraPayment;
+
+            const progress = ((this.loanAmount - result.remainingBalance) / this.loanAmount * 100).toFixed(1);
             
             html += `
                 <div class="year-row">
-                    <div>第 ${year} 年</div>
-                    <div>${this.formatNumber(data.principal)}</div>
-                    <div>${this.formatNumber(data.interest)}</div>
-                    <div>${this.formatNumber(data.totalDividend)}</div>
-                    <div>${this.formatNumber(data.stockInvestment)}</div>
-                    <div>${this.formatNumber(data.lastBalance)}</div>
-                    <div>${totalShares} 張</div>
-                    <div>${this.formatNumber(totalStockValue)}</div>
+                    <div class="year-row-mobile">
+                        <span>第${result.year}年</span>
+                        <span>剩餘: ${this.formatNumber(result.remainingBalance)}萬</span>
+                    </div>
+                    <div class="year-details-grid">
+                        <div class="year-detail-item">
+                            <span>年利息</span>
+                            <span>${this.formatNumber(result.yearInterest)}萬</span>
+                        </div>
+                        <div class="year-detail-item">
+                            <span>年本金</span>
+                            <span>${this.formatNumber(result.yearPrincipal)}萬</span>
+                        </div>
+                        <div class="year-detail-item">
+                            <span>年配息</span>
+                            <span>${this.formatCurrency(result.totalDividend)}</span>
+                        </div>
+                        <div class="year-detail-item">
+                            <span>額外還款</span>
+                            <span>${this.formatNumber(result.extraPayment)}萬</span>
+                        </div>
+                        <div class="year-detail-item">
+                            <span>實際還款</span>
+                            <span>${this.formatNumber(result.actualPayment)}萬</span>
+                        </div>
+                        <div class="year-detail-item">
+                            <span>還款進度</span>
+                            <span>${progress}%</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="margin-top: 8px;">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
                 </div>
             `;
         });
 
+        // 總計行
+        html += `
+            <div class="year-row total" style="background: #e9ecef; border: 2px solid #495057;">
+                <div class="year-row-mobile">
+                    <span style="font-weight: bold; color: #495057;">總計</span>
+                    <span style="font-weight: bold; color: #495057;">100%完成</span>
+                </div>
+                <div class="year-details-grid">
+                    <div class="year-detail-item" style="background: #dee2e6;">
+                        <span>總利息</span>
+                        <span>${this.formatNumber(totalInterest)}萬</span>
+                    </div>
+                    <div class="year-detail-item" style="background: #dee2e6;">
+                        <span>總本金</span>
+                        <span>${this.formatNumber(totalPrincipal)}萬</span>
+                    </div>
+                    <div class="year-detail-item" style="background: #dee2e6;">
+                        <span>總配息</span>
+                        <span>${this.formatCurrency(totalDividend)}</span>
+                    </div>
+                    <div class="year-detail-item" style="background: #dee2e6;">
+                        <span>總額外還款</span>
+                        <span>${this.formatNumber(totalExtraPayment)}萬</span>
+                    </div>
+                    <div class="year-detail-item" style="background: #dee2e6;">
+                        <span>總還款</span>
+                        <span>${this.formatNumber(totalPrincipal + totalInterest)}萬</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
         tableContent.innerHTML = html;
     }
-}
 
 // 初始化計算器
 const calculator = new MortgageCalculator();

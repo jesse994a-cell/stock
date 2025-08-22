@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jesse房貸試算</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .stock-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stock-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .stock-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .stock-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stock-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .stock-params {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .param-group {
+            margin-bottom: 12px;
+        }
+
+        .param-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .param-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .param-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .dividend-months {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results-panel {
+            background: white;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .summary-card.green {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .summary-card.blue {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .summary-card.purple {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .summary-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .summary-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .table-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .year-summary-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .year-summary-row:hover {
+            background: #f8f9fa;
+        }
+
+        .year-summary-row.header {
+            background: #495057;
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .year-summary-row.expanded {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .year-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+            color: #666;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .monthly-details {
+            display: none;
+            background: #f8f9fa;
+            border-left: 4px solid #2196f3;
+        }
+
+        .monthly-details.expanded {
+            display: block;
+        }
+
+        .monthly-detail-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 10px 40px;
+            background: #e9ecef;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .monthly-detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 8px 40px;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .monthly-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .monthly-detail-row.dividend-month {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+        }
+
+        .dividend-amount {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .no-dividend {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .year-total {
+            font-weight: bold;
+            color: #2196f3;
+        }
+
+        .table-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 25px;
+            font-weight: 600;
+        }
+
+        .table-content {
+            padding: 20px;
+        }
+
+        .year-row {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        .year-row:last-child {
+            border-bottom: none;
+        }
+
+        .year-row.header {
+            background: #495057;
+            color: white;
+            margin: -20px -20px 20px -20px;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .year-row.total {
+            background: #e9ecef;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .year-row {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            
+            .stock-config {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-params {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-card {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Jesse房貸試算</h1>
+            <p>透過股票配息來加速償還房貸，實現財務自由</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="section-title">
+                    <i class="fas fa-home"></i> 房貸設定
+                </div>
+                
+                <div class="input-group">
+                    <label for="loanAmount">貸款金額 (萬元)</label>
+                    <input type="number" id="loanAmount" value="1425" step="1">
+                </div>
+                
+                <div class="input-group">
+                    <label for="interestRate">年利率 (%)</label>
+                    <input type="number" id="interestRate" value="2.22" step="0.01">
+                </div>
+                
+                <div class="input-group">
+                    <label for="loanYears">貸款年期</label>
+                    <input type="number" id="loanYears" value="40" step="1">
+                </div>
+
+                <div class="section-title" style="margin-top: 30px;">
+                    <i class="fas fa-chart-bar"></i> 存股設定
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fas fa-chart-pie"></i> 股票投資設定</label>
+                    <div class="stock-config">
+                        <!-- 0056 卡片 -->
+                        <div class="stock-card">
+                            <div class="stock-card-header">
+                                <div class="stock-name">0056</div>
+                                <div class="stock-badge">高股息ETF</div>
+                            </div>
+                            <div class="stock-params">
+                                <div class="param-group">
+                                    <label for="initial0056">初始持股 (張)</label>
+                                    <input type="number" id="initial0056" value="35" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="monthly0056">每月購買 (張)</label>
+                                    <input type="number" id="monthly0056" value="1" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="price0056">目前股價 (元)</label>
+                                    <input type="number" id="price0056" value="34.71" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="growth0056">年漲幅 (%)</label>
+                                    <input type="number" id="growth0056" value="3" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="div0056">季配息 (元/張)</label>
+                                    <input type="number" id="div0056" value="866" step="1" min="0">
+                                </div>
+                            </div>
+                            <div class="dividend-months">
+                                <i class="fas fa-calendar-alt"></i> 配息月份：1, 4, 7, 10月
+                            </div>
+                        </div>
+
+                        <!-- 00878 卡片 -->
+                        <div class="stock-card">
+                            <div class="stock-card-header">
+                                <div class="stock-name">00878</div>
+                                <div class="stock-badge">國泰永續高股息</div>
+                            </div>
+                            <div class="stock-params">
+                                <div class="param-group">
+                                    <label for="initial00878">初始持股 (張)</label>
+                                    <input type="number" id="initial00878" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="monthly00878">每月購買 (張)</label>
+                                    <input type="number" id="monthly00878" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="price00878">目前股價 (元)</label>
+                                    <input type="number" id="price00878" value="21" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="growth00878">年漲幅 (%)</label>
+                                    <input type="number" id="growth00878" value="3" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="div00878">季配息 (元/張)</label>
+                                    <input type="number" id="div00878" value="450" step="1" min="0">
+                                </div>
+                            </div>
+                            <div class="dividend-months">
+                                <i class="fas fa-calendar-alt"></i> 配息月份：2, 5, 8, 11月
+                            </div>
+                        </div>
+
+                        <!-- 00712 卡片 -->
+                        <div class="stock-card">
+                            <div class="stock-card-header">
+                                <div class="stock-name">00712</div>
+                                <div class="stock-badge">FH富時不動產</div>
+                            </div>
+                            <div class="stock-params">
+                                <div class="param-group">
+                                    <label for="initial00712">初始持股 (張)</label>
+                                    <input type="number" id="initial00712" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="monthly00712">每月購買 (張)</label>
+                                    <input type="number" id="monthly00712" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="price00712">目前股價 (元)</label>
+                                    <input type="number" id="price00712" value="9" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="growth00712">年漲幅 (%)</label>
+                                    <input type="number" id="growth00712" value="2" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="div00712">季配息 (元/張)</label>
+                                    <input type="number" id="div00712" value="170" step="1" min="0">
+                                </div>
+                            </div>
+                            <div class="dividend-months">
+                                <i class="fas fa-calendar-alt"></i> 配息月份：3, 6, 9, 12月
+                            </div>
+                        </div>
+
+                        <!-- 00919 卡片 -->
+                        <div class="stock-card">
+                            <div class="stock-card-header">
+                                <div class="stock-name">00919</div>
+                                <div class="stock-badge">群益台灣精選高息</div>
+                            </div>
+                            <div class="stock-params">
+                                <div class="param-group">
+                                    <label for="initial00919">初始持股 (張)</label>
+                                    <input type="number" id="initial00919" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="monthly00919">每月購買 (張)</label>
+                                    <input type="number" id="monthly00919" value="0" step="1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="price00919">目前股價 (元)</label>
+                                    <input type="number" id="price00919" value="21" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="growth00919">年漲幅 (%)</label>
+                                    <input type="number" id="growth00919" value="3" step="0.1" min="0">
+                                </div>
+                                <div class="param-group">
+                                    <label for="div00919">季配息 (元/張)</label>
+                                    <input type="number" id="div00919" value="700" step="1" min="0">
+                                </div>
+                            </div>
+                            <div class="dividend-months">
+                                <i class="fas fa-calendar-alt"></i> 配息月份：3, 6, 9, 12月
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="calculate()">
+                    <i class="fas fa-calculator"></i> 開始試算
+                </button>
+            </div>
+
+            <div class="results-panel">
+                <div class="summary-cards" id="summaryCards">
+                    <!-- 摘要卡片將由 JavaScript 生成 -->
+                </div>
+
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <i class="fas fa-calendar-check"></i> 每月配息明細
+                    </div>
+                    <div class="table-content" id="monthlyDividendTable">
+                        <!-- 每月配息表格將由 JavaScript 生成 -->
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <i class="fas fa-table"></i> 年度還款計畫
+                    </div>
+                    <div class="table-content" id="detailTable">
+                        <!-- 詳細表格將由 JavaScript 生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>

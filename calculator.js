@@ -328,39 +328,41 @@ class MortgageCalculator {
                     </div>
             `;
             
-            // 生成該年度的月度明細
+            // 生成該年度的月度明細 - 只顯示有配息的月份
             data.months.forEach(result => {
                 const hasDiv = result.totalDividend > 0;
-                const rowClass = hasDiv ? 'monthly-detail-row dividend-month' : 'monthly-detail-row';
                 
-                html += `
-                    <div class="${rowClass}">
-                        <div class="monthly-row-header">
-                            <span>${result.currentMonth}月</span>
-                            <span class="${hasDiv ? 'dividend-amount' : 'no-dividend'}">
-                                ${hasDiv ? this.formatCurrency(result.totalDividend) : '無配息'}
-                            </span>
+                // 只顯示有配息的月份
+                if (hasDiv) {
+                    html += `
+                        <div class="monthly-detail-row dividend-month">
+                            <div class="monthly-row-header">
+                                <span>${result.currentMonth}月</span>
+                                <span class="dividend-amount">
+                                    ${this.formatCurrency(result.totalDividend)}
+                                </span>
+                            </div>
+                            <div class="monthly-stocks-grid">
+                                <div class="stock-dividend-item ${result.dividends['0056'] > 0 ? 'has-dividend' : ''}">
+                                    <span>0056</span>
+                                    <span>${result.dividends['0056'] > 0 ? this.formatNumber(result.dividends['0056']) : '-'}</span>
+                                </div>
+                                <div class="stock-dividend-item ${result.dividends['00878'] > 0 ? 'has-dividend' : ''}">
+                                    <span>00878</span>
+                                    <span>${result.dividends['00878'] > 0 ? this.formatNumber(result.dividends['00878']) : '-'}</span>
+                                </div>
+                                <div class="stock-dividend-item ${result.dividends['00712'] > 0 ? 'has-dividend' : ''}">
+                                    <span>00712</span>
+                                    <span>${result.dividends['00712'] > 0 ? this.formatNumber(result.dividends['00712']) : '-'}</span>
+                                </div>
+                                <div class="stock-dividend-item ${result.dividends['00919'] > 0 ? 'has-dividend' : ''}">
+                                    <span>00919</span>
+                                    <span>${result.dividends['00919'] > 0 ? this.formatNumber(result.dividends['00919']) : '-'}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="monthly-stocks-grid">
-                            <div class="stock-dividend-item ${result.dividends['0056'] > 0 ? 'has-dividend' : ''}">
-                                <span>0056</span>
-                                <span>${result.dividends['0056'] > 0 ? this.formatNumber(result.dividends['0056']) : '-'}</span>
-                            </div>
-                            <div class="stock-dividend-item ${result.dividends['00878'] > 0 ? 'has-dividend' : ''}">
-                                <span>00878</span>
-                                <span>${result.dividends['00878'] > 0 ? this.formatNumber(result.dividends['00878']) : '-'}</span>
-                            </div>
-                            <div class="stock-dividend-item ${result.dividends['00712'] > 0 ? 'has-dividend' : ''}">
-                                <span>00712</span>
-                                <span>${result.dividends['00712'] > 0 ? this.formatNumber(result.dividends['00712']) : '-'}</span>
-                            </div>
-                            <div class="stock-dividend-item ${result.dividends['00919'] > 0 ? 'has-dividend' : ''}">
-                                <span>00919</span>
-                                <span>${result.dividends['00919'] > 0 ? this.formatNumber(result.dividends['00919']) : '-'}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             });
             
             html += `</div>`;

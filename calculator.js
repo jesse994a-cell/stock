@@ -34,53 +34,69 @@ class MortgageCalculator {
 
     // 主要計算函數
     calculate() {
-        // 獲取輸入參數
-        const loanAmount = parseFloat(document.getElementById('loanAmount').value) * 10000;
-        const annualRate = parseFloat(document.getElementById('interestRate').value);
-        const loanYears = parseInt(document.getElementById('loanYears').value);
+        try {
+            // 獲取輸入參數並驗證
+            const loanAmountInput = document.getElementById('loanAmount').value;
+            const annualRateInput = document.getElementById('interestRate').value;
+            const loanYearsInput = document.getElementById('loanYears').value;
+            
+            if (!loanAmountInput || !annualRateInput || !loanYearsInput) {
+                alert('請填入所有必要參數');
+                return;
+            }
+            
+            this.loanAmount = parseFloat(loanAmountInput) * 10000;
+            const annualRate = parseFloat(annualRateInput);
+            const loanYears = parseInt(loanYearsInput);
+            
+            if (isNaN(this.loanAmount) || isNaN(annualRate) || isNaN(loanYears) || 
+                this.loanAmount <= 0 || annualRate <= 0 || loanYears <= 0) {
+                alert('請輸入有效的數值');
+                return;
+            }
         
         const initialStocks = {
-            "0056": parseInt(document.getElementById('initial0056').value),
-            "00878": parseInt(document.getElementById('initial00878').value),
-            "00712": parseInt(document.getElementById('initial00712').value),
-            "00919": parseInt(document.getElementById('initial00919').value)
+            "0056": parseInt(document.getElementById('initial0056').value) || 0,
+            "00878": parseInt(document.getElementById('initial00878').value) || 0,
+            "00712": parseInt(document.getElementById('initial00712').value) || 0,
+            "00919": parseInt(document.getElementById('initial00919').value) || 0
         };
         
         const monthlyPurchase = {
-            "0056": parseInt(document.getElementById('monthly0056').value),
-            "00878": parseInt(document.getElementById('monthly00878').value),
-            "00712": parseInt(document.getElementById('monthly00712').value),
-            "00919": parseInt(document.getElementById('monthly00919').value)
+            "0056": parseInt(document.getElementById('monthly0056').value) || 0,
+            "00878": parseInt(document.getElementById('monthly00878').value) || 0,
+            "00712": parseInt(document.getElementById('monthly00712').value) || 0,
+            "00919": parseInt(document.getElementById('monthly00919').value) || 0
         };
         
         const stockPrices = {
-            "0056": parseFloat(document.getElementById('price0056').value),
-            "00878": parseFloat(document.getElementById('price00878').value),
-            "00712": parseFloat(document.getElementById('price00712').value),
-            "00919": parseFloat(document.getElementById('price00919').value)
+            "0056": parseFloat(document.getElementById('price0056').value) || 0,
+            "00878": parseFloat(document.getElementById('price00878').value) || 0,
+            "00712": parseFloat(document.getElementById('price00712').value) || 0,
+            "00919": parseFloat(document.getElementById('price00919').value) || 0
         };
         
         const annualGrowth = {
-            "0056": parseFloat(document.getElementById('growth0056').value) / 100,
-            "00878": parseFloat(document.getElementById('growth00878').value) / 100,
-            "00712": parseFloat(document.getElementById('growth00712').value) / 100,
-            "00919": parseFloat(document.getElementById('growth00919').value) / 100
+            "0056": (parseFloat(document.getElementById('growth0056').value) || 0) / 100,
+            "00878": (parseFloat(document.getElementById('growth00878').value) || 0) / 100,
+            "00712": (parseFloat(document.getElementById('growth00712').value) || 0) / 100,
+            "00919": (parseFloat(document.getElementById('growth00919').value) || 0) / 100
         };
         
         const dividends = {
-            "0056": parseFloat(document.getElementById('div0056').value),
-            "00878": parseFloat(document.getElementById('div00878').value),
-            "00712": parseFloat(document.getElementById('div00712').value),
-            "00919": parseFloat(document.getElementById('div00919').value)
+            "0056": parseFloat(document.getElementById('div0056').value) || 0,
+            "00878": parseFloat(document.getElementById('div00878').value) || 0,
+            "00712": parseFloat(document.getElementById('div00712').value) || 0,
+            "00919": parseFloat(document.getElementById('div00919').value) || 0
         };
 
         // 計算基本參數
         const monthlyRate = annualRate / 12 / 100;
         const totalMonths = loanYears * 12;
-        const monthlyPayment = this.calculateMonthlyPayment(loanAmount, annualRate, loanYears);
+        const monthlyPayment = this.calculateMonthlyPayment(this.loanAmount, annualRate, loanYears);
         
         // 初始化變數
-        let remainingBalance = loanAmount;
+        let remainingBalance = this.loanAmount;
         let currentStocks = { ...initialStocks };
         let currentStockPrices = { ...stockPrices };
         
@@ -120,7 +136,7 @@ class MortgageCalculator {
                     let shouldBuy = false;
                     if (stock === "00712") {
                         shouldBuy = true; // 每月固定買入
-                    } else if (this.dividendMonths[stock].includes(currentMonth)) {
+                    } else if (this.dividendMonths[stock] && this.dividendMonths[stock].includes(currentMonth)) {
                         shouldBuy = true; // 配息月買入
                     }
                     
@@ -142,7 +158,7 @@ class MortgageCalculator {
             let totalMonthlyDividend = 0;
             
             Object.keys(dividends).forEach(stock => {
-                if (this.dividendMonths[stock].includes(currentMonth)) {
+                if (this.dividendMonths[stock] && this.dividendMonths[stock].includes(currentMonth)) {
                     monthlyDividends[stock] = currentStocks[stock] * dividends[stock];
                     totalMonthlyDividend += monthlyDividends[stock];
                 } else {
@@ -181,6 +197,7 @@ class MortgageCalculator {
                 stocks: { ...currentStocks },
                 stockPrices: { ...currentStockPrices },
                 dividends: { ...monthlyDividends },
+                monthlyDividends: { ...monthlyDividends },
                 totalDividend: totalMonthlyDividend,
                 monthlyStockCost: monthlyStockCost,
                 totalStockInvestment: totalStockInvestment
@@ -202,7 +219,7 @@ class MortgageCalculator {
                     chartData.push({
                         year: Math.ceil(month / 12),
                         balance: 0,
-                        totalPaid: loanAmount / 10000
+                        totalPaid: this.loanAmount / 10000
                     });
                 }
                 break;
@@ -216,7 +233,7 @@ class MortgageCalculator {
 
         // 計算摘要統計
         const originalTotalPayment = monthlyPayment * totalMonths;
-        const actualTotalPayment = loanAmount + totalInterestPaid - totalEarlyPayment;
+        const actualTotalPayment = this.loanAmount + totalInterestPaid - totalEarlyPayment;
         const savedAmount = Math.max(0, originalTotalPayment - actualTotalPayment);
         const savedYears = Math.max(0, loanYears - Math.ceil(payoffMonth / 12));
 
@@ -232,10 +249,52 @@ class MortgageCalculator {
             finalStockPrices: currentStockPrices
         };
 
+        // 按年度匯總數據
+        const yearlyResults = this.aggregateYearlyData(results);
+        
         // 更新界面
         this.updateSummaryCards(summary);
         this.updateMonthlyDividendTable(results);
-        this.updateDetailTable(results);
+        this.updateDetailTable(yearlyResults);
+        
+        } catch (error) {
+            console.error('計算錯誤:', error);
+            console.error('錯誤堆疊:', error.stack);
+            alert('計算過程中發生錯誤: ' + error.message);
+        }
+    }
+
+    // 按年度匯總數據
+    aggregateYearlyData(results) {
+        const yearlyData = {};
+        
+        results.forEach(result => {
+            const year = result.year;
+            if (!yearlyData[year]) {
+                yearlyData[year] = {
+                    year: year,
+                    yearInterest: 0,
+                    yearPrincipal: 0,
+                    totalDividend: 0,
+                    extraPayment: 0,
+                    actualPayment: 0,
+                    remainingBalance: 0
+                };
+            }
+            
+            yearlyData[year].yearInterest += result.interestPayment;
+            yearlyData[year].yearPrincipal += result.principalPayment;
+            yearlyData[year].totalDividend += result.totalDividend;
+            yearlyData[year].extraPayment += result.earlyPayment;
+            yearlyData[year].actualPayment += result.totalPayment;
+            
+            // 使用年底的餘額
+            if (result.currentMonth === 12 || result.remainingBalance === 0) {
+                yearlyData[year].remainingBalance = result.remainingBalance;
+            }
+        });
+        
+        return Object.values(yearlyData);
     }
 
     // 更新摘要卡片
@@ -343,21 +402,21 @@ class MortgageCalculator {
                                 </span>
                             </div>
                             <div class="monthly-stocks-grid">
-                                <div class="stock-dividend-item ${result.dividends['0056'] > 0 ? 'has-dividend' : ''}">
+                                <div class="stock-dividend-item ${result.monthlyDividends['0056'] > 0 ? 'has-dividend' : ''}">
                                     <span>0056</span>
-                                    <span>${result.dividends['0056'] > 0 ? this.formatNumber(result.dividends['0056']) : '-'}</span>
+                                    <span>${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}</span>
                                 </div>
-                                <div class="stock-dividend-item ${result.dividends['00878'] > 0 ? 'has-dividend' : ''}">
+                                <div class="stock-dividend-item ${result.monthlyDividends['00878'] > 0 ? 'has-dividend' : ''}">
                                     <span>00878</span>
-                                    <span>${result.dividends['00878'] > 0 ? this.formatNumber(result.dividends['00878']) : '-'}</span>
+                                    <span>${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}</span>
                                 </div>
-                                <div class="stock-dividend-item ${result.dividends['00712'] > 0 ? 'has-dividend' : ''}">
+                                <div class="stock-dividend-item ${result.monthlyDividends['00712'] > 0 ? 'has-dividend' : ''}">
                                     <span>00712</span>
-                                    <span>${result.dividends['00712'] > 0 ? this.formatNumber(result.dividends['00712']) : '-'}</span>
+                                    <span>${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}</span>
                                 </div>
-                                <div class="stock-dividend-item ${result.dividends['00919'] > 0 ? 'has-dividend' : ''}">
+                                <div class="stock-dividend-item ${result.monthlyDividends['00919'] > 0 ? 'has-dividend' : ''}">
                                     <span>00919</span>
-                                    <span>${result.dividends['00919'] > 0 ? this.formatNumber(result.dividends['00919']) : '-'}</span>
+                                    <span>${result.monthlyDividends['00919'] > 0 ? this.formatNumber(result.monthlyDividends['00919']) : '-'}</span>
                                 </div>
                             </div>
                         </div>
@@ -404,30 +463,46 @@ class MortgageCalculator {
             
             html += `
                 <div class="year-row">
+                    <div>第${result.year}年</div>
+                    <div>${this.formatNumber(result.remainingBalance / 10000)}</div>
+                    <div>${this.formatNumber(result.yearInterest / 10000)}</div>
+                    <div>${this.formatNumber(result.yearPrincipal / 10000)}</div>
+                    <div>${this.formatNumber(result.totalDividend / 10000)}</div>
+                    <div>${this.formatNumber(result.extraPayment / 10000)}</div>
+                    <div>${this.formatNumber(result.actualPayment / 10000)}</div>
+                    <div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        ${progress}%
+                    </div>
+                </div>
+                
+                <div class="year-row" style="display: none;">
                     <div class="year-row-mobile">
                         <span>第${result.year}年</span>
-                        <span>剩餘: ${this.formatNumber(result.remainingBalance)}萬</span>
+                        <span>剩餘: ${this.formatNumber(result.remainingBalance / 10000)}萬</span>
                     </div>
                     <div class="year-details-grid">
                         <div class="year-detail-item">
                             <span>年利息</span>
-                            <span>${this.formatNumber(result.yearInterest)}萬</span>
+                            <span>${this.formatNumber(result.yearInterest / 10000)}萬</span>
                         </div>
                         <div class="year-detail-item">
                             <span>年本金</span>
-                            <span>${this.formatNumber(result.yearPrincipal)}萬</span>
+                            <span>${this.formatNumber(result.yearPrincipal / 10000)}萬</span>
                         </div>
                         <div class="year-detail-item">
                             <span>年配息</span>
-                            <span>${this.formatCurrency(result.totalDividend)}</span>
+                            <span>${this.formatNumber(result.totalDividend / 10000)}萬</span>
                         </div>
                         <div class="year-detail-item">
                             <span>額外還款</span>
-                            <span>${this.formatNumber(result.extraPayment)}萬</span>
+                            <span>${this.formatNumber(result.extraPayment / 10000)}萬</span>
                         </div>
                         <div class="year-detail-item">
                             <span>實際還款</span>
-                            <span>${this.formatNumber(result.actualPayment)}萬</span>
+                            <span>${this.formatNumber(result.actualPayment / 10000)}萬</span>
                         </div>
                         <div class="year-detail-item">
                             <span>還款進度</span>
@@ -475,9 +550,10 @@ class MortgageCalculator {
 
         tableContent.innerHTML = html;
     }
+}
 
 // 初始化計算器
-const calculator = new MortgageCalculator();
+var calculator = new MortgageCalculator();
 
 // 全域計算函數
 function calculate() {

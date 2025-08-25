@@ -727,6 +727,20 @@
                 </div>
 
                 <div class="input-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="dividendReinvestToggle" style="transform: scale(1.2);">
+                        <span style="font-weight: 600; color: #495057;">
+                            <i class="fas fa-sync-alt"></i> 配息再投資策略
+                        </span>
+                    </label>
+                    <div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9rem; color: #6c757d;">
+                        <div id="strategyDescription">
+                            <strong>關閉</strong>：高股息ETF配息用於還房貸
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
                     <label><i class="fas fa-chart-pie"></i> 股票投資設定</label>
                     <div class="stock-config">
                         <!-- 0056 卡片 -->
@@ -737,12 +751,12 @@
                             </div>
                             <div class="stock-params">
                                 <div class="param-group">
-                                    <label for="initial0056">初始持股 (張)</label>
-                                    <input type="number" id="initial0056" value="100" step="1" min="0">
+                                    <label for="initial0056">初始持股 (股)</label>
+                                    <input type="number" id="initial0056" value="100000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="monthly0056">每月購買 (張)</label>
-                                    <input type="number" id="monthly0056" value="2" step="1" min="0">
+                                    <label for="monthly0056">每月購買 (股)</label>
+                                    <input type="number" id="monthly0056" value="2000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price0056">目前股價 (元)</label>
@@ -753,8 +767,8 @@
                                     <input type="number" id="growth0056" value="3" step="0.1" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="div0056">季配息 (元/張)</label>
-                                    <input type="number" id="div0056" value="800" step="1" min="0">
+                                    <label for="div0056">季配息 (元/股)</label>
+                                    <input type="number" id="div0056" value="0.8" step="0.1" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">
@@ -770,12 +784,12 @@
                             </div>
                             <div class="stock-params">
                                 <div class="param-group">
-                                    <label for="initial00878">初始持股 (張)</label>
-                                    <input type="number" id="initial00878" value="200" step="1" min="0">
+                                    <label for="initial00878">初始持股 (股)</label>
+                                    <input type="number" id="initial00878" value="200000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="monthly00878">每月購買 (張)</label>
-                                    <input type="number" id="monthly00878" value="3" step="1" min="0">
+                                    <label for="monthly00878">每月購買 (股)</label>
+                                    <input type="number" id="monthly00878" value="3000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price00878">目前股價 (元)</label>
@@ -786,8 +800,8 @@
                                     <input type="number" id="growth00878" value="3" step="0.1" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="div00878">季配息 (元/張)</label>
-                                    <input type="number" id="div00878" value="350" step="1" min="0">
+                                    <label for="div00878">季配息 (元/股)</label>
+                                    <input type="number" id="div00878" value="0.35" step="0.01" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">
@@ -803,12 +817,12 @@
                             </div>
                             <div class="stock-params">
                                 <div class="param-group">
-                                    <label for="initial0050">初始持股 (張)</label>
-                                    <input type="number" id="initial0050" value="0" step="1" min="0">
+                                    <label for="initial0050">初始持股 (股)</label>
+                                    <input type="number" id="initial0050" value="0" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="monthly0050">每月購買 (張)</label>
-                                    <input type="number" id="monthly0050" value="0" step="1" min="0">
+                                    <label for="monthly0050">每月購買 (股)</label>
+                                    <input type="number" id="monthly0050" value="0" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price0050">目前股價 (元)</label>
@@ -819,8 +833,8 @@
                                     <input type="number" id="growth0050" value="8" step="0.1" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="div0050">半年配息 (元/張)</label>
-                                    <input type="number" id="div0050" value="360" step="1" min="0">
+                                    <label for="div0050">半年配息 (元/股)</label>
+                                    <input type="number" id="div0050" value="0.36" step="0.01" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">
@@ -836,12 +850,12 @@
                             </div>
                             <div class="stock-params">
                                 <div class="param-group">
-                                    <label for="initial00919">初始持股 (張)</label>
-                                    <input type="number" id="initial00919" value="150" step="1" min="0">
+                                    <label for="initial00919">初始持股 (股)</label>
+                                    <input type="number" id="initial00919" value="150000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="monthly00919">每月購買 (張)</label>
-                                    <input type="number" id="monthly00919" value="3" step="1" min="0">
+                                    <label for="monthly00919">每月購買 (股)</label>
+                                    <input type="number" id="monthly00919" value="2000" step="1000" min="0">
                                 </div>
                                 <div class="param-group">
                                     <label for="price00919">目前股價 (元)</label>
@@ -852,8 +866,8 @@
                                     <input type="number" id="growth00919" value="3" step="0.1" min="0">
                                 </div>
                                 <div class="param-group">
-                                    <label for="div00919">季配息 (元/張)</label>
-                                    <input type="number" id="div00919" value="500" step="1" min="0">
+                                    <label for="div00919">季配息 (元/股)</label>
+                                    <input type="number" id="div00919" value="0.4" step="0.01" min="0">
                                 </div>
                             </div>
                             <div class="dividend-months">

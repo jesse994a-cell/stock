@@ -4,7 +4,7 @@ class MortgageCalculator {
         this.dividendMonths = {
             "0056": [1, 4, 7, 10],
             "00878": [2, 5, 8, 11], 
-            "00712": [3, 6, 9, 12],
+            "0050": [1, 7],
             "00919": [3, 6, 9, 12]
         };
     }
@@ -58,35 +58,35 @@ class MortgageCalculator {
         const initialStocks = {
             "0056": parseInt(document.getElementById('initial0056').value) || 0,
             "00878": parseInt(document.getElementById('initial00878').value) || 0,
-            "00712": parseInt(document.getElementById('initial00712').value) || 0,
+            "0050": parseInt(document.getElementById('initial0050').value) || 0,
             "00919": parseInt(document.getElementById('initial00919').value) || 0
         };
         
         const monthlyPurchase = {
             "0056": parseInt(document.getElementById('monthly0056').value) || 0,
             "00878": parseInt(document.getElementById('monthly00878').value) || 0,
-            "00712": parseInt(document.getElementById('monthly00712').value) || 0,
+            "0050": parseInt(document.getElementById('monthly0050').value) || 0,
             "00919": parseInt(document.getElementById('monthly00919').value) || 0
         };
         
         const stockPrices = {
             "0056": parseFloat(document.getElementById('price0056').value) || 0,
             "00878": parseFloat(document.getElementById('price00878').value) || 0,
-            "00712": parseFloat(document.getElementById('price00712').value) || 0,
+            "0050": parseFloat(document.getElementById('price0050').value) || 0,
             "00919": parseFloat(document.getElementById('price00919').value) || 0
         };
         
         const annualGrowth = {
             "0056": (parseFloat(document.getElementById('growth0056').value) || 0) / 100,
             "00878": (parseFloat(document.getElementById('growth00878').value) || 0) / 100,
-            "00712": (parseFloat(document.getElementById('growth00712').value) || 0) / 100,
+            "0050": (parseFloat(document.getElementById('growth0050').value) || 0) / 100,
             "00919": (parseFloat(document.getElementById('growth00919').value) || 0) / 100
         };
         
         const dividends = {
             "0056": parseFloat(document.getElementById('div0056').value) || 0,
             "00878": parseFloat(document.getElementById('div00878').value) || 0,
-            "00712": parseFloat(document.getElementById('div00712').value) || 0,
+            "0050": parseFloat(document.getElementById('div0050').value) || 0,
             "00919": parseFloat(document.getElementById('div00919').value) || 0
         };
 
@@ -134,7 +134,7 @@ class MortgageCalculator {
                 if (purchaseAmount > 0) {
                     // 只在配息月或每月固定購買
                     let shouldBuy = false;
-                    if (stock === "00712") {
+                    if (stock === "0050") {
                         shouldBuy = true; // 每月固定買入
                     } else if (this.dividendMonths[stock] && this.dividendMonths[stock].includes(currentMonth)) {
                         shouldBuy = true; // 配息月買入
@@ -381,7 +381,7 @@ class MortgageCalculator {
                         <div>月份</div>
                         <div>0056</div>
                         <div>00878</div>
-                        <div>00712</div>
+                        <div>0050</div>
                         <div>00919</div>
                         <div>總配息</div>
                         <div>總市值</div>
@@ -415,10 +415,10 @@ class MortgageCalculator {
                                     ${result.stocks['00878']}張 × $${result.stockPrices['00878'].toFixed(1)}
                                 </small>
                             </div>
-                            <div class="${result.monthlyDividends['00712'] > 0 ? 'dividend-amount' : 'no-dividend'}">
-                                ${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}
+                            <div class="${result.monthlyDividends['0050'] > 0 ? 'dividend-amount' : 'no-dividend'}">
+                                ${result.monthlyDividends['0050'] > 0 ? this.formatNumber(result.monthlyDividends['0050']) : '-'}
                                 <br><small style="color: #666; font-size: 0.8em;">
-                                    ${result.stocks['00712']}張 × $${result.stockPrices['00712'].toFixed(1)}
+                                    ${result.stocks['0050']}張 × $${result.stockPrices['0050'].toFixed(1)}
                                 </small>
                             </div>
                             <div class="${result.monthlyDividends['00919'] > 0 ? 'dividend-amount' : 'no-dividend'}">
@@ -453,9 +453,9 @@ class MortgageCalculator {
                                     <span>00878 (${result.stocks['00878']}張)</span>
                                     <span>${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}</span>
                                 </div>
-                                <div class="stock-dividend-item ${result.monthlyDividends['00712'] > 0 ? 'has-dividend' : ''}">
-                                    <span>00712 (${result.stocks['00712']}張)</span>
-                                    <span>${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}</span>
+                                <div class="stock-dividend-item ${result.monthlyDividends['0050'] > 0 ? 'has-dividend' : ''}">
+                                    <span>0050 (${result.stocks['0050']}張)</span>
+                                    <span>${result.monthlyDividends['0050'] > 0 ? this.formatNumber(result.monthlyDividends['0050']) : '-'}</span>
                                 </div>
                                 <div class="stock-dividend-item ${result.monthlyDividends['00919'] > 0 ? 'has-dividend' : ''}">
                                     <span>00919 (${result.stocks['00919']}張)</span>

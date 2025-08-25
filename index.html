@@ -314,7 +314,7 @@
 
         .monthly-detail-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1.2fr 1.2fr 1.2fr 1.2fr 1fr 1.5fr;
             gap: 10px;
             padding: 10px 40px;
             background: #e9ecef;
@@ -325,7 +325,7 @@
 
         .monthly-detail-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1.2fr 1.2fr 1.2fr 1.2fr 1fr 1.5fr;
             gap: 10px;
             padding: 8px 40px;
             border-bottom: 1px solid #e9ecef;
@@ -552,12 +552,14 @@
             .monthly-detail-row > div:nth-child(3),
             .monthly-detail-row > div:nth-child(4),
             .monthly-detail-row > div:nth-child(5),
-            .monthly-detail-row > div:nth-child(6) {
+            .monthly-detail-row > div:nth-child(6),
+            .monthly-detail-row > div:nth-child(7) {
                 display: none;
             }
             
             .monthly-detail-row .monthly-row-header,
-            .monthly-detail-row .monthly-stocks-grid {
+            .monthly-detail-row .monthly-stocks-grid,
+            .monthly-detail-row .monthly-total {
                 display: block !important;
             }
             

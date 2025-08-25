@@ -216,7 +216,7 @@ class MortgageCalculator {
                 }
             } else if (selectedStrategy === 'afterMortgage') {
                 // 策略2：配息扣掉房貸後，餘額投入0050
-                const mortgagePayment = Math.min(totalMonthlyDividend, principalPayment);
+                const mortgagePayment = Math.min(totalMonthlyDividend, monthlyPayment);
                 dividendForMortgage = mortgagePayment;
                 dividendFor0050Investment = totalMonthlyDividend - mortgagePayment;
                 
@@ -235,11 +235,12 @@ class MortgageCalculator {
             }
             // 預設策略 (mortgage)：配息用於還房貸，無需額外處理
             
-            // 計算實際還款金額（本金 + 配息）
-            const actualPayment = principalPayment + dividendForMortgage;
-            const earlyPayment = Math.max(0, actualPayment - principalPayment);
+            // 計算實際還款邏輯：配息優先支付當月利息，剩餘才算額外本金
+            const extraPrincipal = Math.max(0, dividendForMortgage - monthlyInterest);
+            const actualPayment = principalPayment + extraPrincipal; // 實際用於減少本金的金額
+            const earlyPayment = extraPrincipal; // 額外還款等於額外本金
             
-            // 更新餘額
+            // 更新餘額（僅本金減少）
             remainingBalance = Math.max(0, remainingBalance - actualPayment);
             
             // 累計統計

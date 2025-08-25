@@ -476,75 +476,90 @@
             
             .summary-cards {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            
-            .summary-card {
-                padding: 15px;
-            }
-            
-            .summary-card h3 {
-                font-size: 0.8rem;
-            }
-            
-            .summary-card .value {
-                font-size: 1.4rem;
-            }
-            
-            .table-container {
-                margin-bottom: 20px;
-            }
-            
-            .table-header {
-                padding: 12px 15px;
-                font-size: 0.95rem;
-            }
-            
-            .table-content {
-                padding: 15px;
-            }
-            
-            /* 手機版年度配息表格 */
-            .year-summary-row {
-                display: block;
-                padding: 15px;
-                border: 1px solid #e9ecef;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                background: white;
-            }
-            
-            .year-summary-row.header {
-                display: none;
-            }
-            
-            .year-summary-mobile {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                margin-bottom: 8px;
-            }
-            
-            .year-summary-details {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
                 gap: 10px;
-                font-size: 0.85rem;
+                font-weight: 600;
+            }
+
+            .expand-icon {
+                transition: transform 0.3s ease;
                 color: #666;
             }
+
+            .expand-icon.expanded {
+                transform: rotate(90deg);
+            }
+
+            .strategy-options {
+                margin: 15px 0;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border: 1px solid #e9ecef;
+            }
             
-            .monthly-detail-header {
+            .strategy-options > label {
+                display: block;
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 12px;
+                font-size: 1rem;
+            }
+            
+            .radio-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .radio-option {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 6px;
+                transition: background-color 0.2s;
+                font-size: 0.9rem;
+            }
+            
+            .radio-option:hover {
+                background-color: rgba(0, 123, 255, 0.1);
+            }
+            
+            .radio-option input[type="radio"] {
                 display: none;
             }
             
-            .monthly-detail-row {
-                display: block;
-                padding: 12px;
-                margin-bottom: 8px;
-                border: 1px solid #e9ecef;
-                border-radius: 6px;
+            .radio-custom {
+                width: 18px;
+                height: 18px;
+                border: 2px solid #dee2e6;
+                border-radius: 50%;
+                margin-right: 10px;
+                position: relative;
+                transition: all 0.2s;
+            }
+            
+            .radio-option input:checked + .radio-custom {
+                border-color: #007bff;
+                background-color: #007bff;
+            }
+            
+            .radio-option input:checked + .radio-custom:after {
+                content: '';
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
                 background: white;
-                font-size: 0.85rem;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .monthly-details {
+                display: none;
             }
             
             .monthly-detail-row > div:first-child,
@@ -743,6 +758,27 @@
                 <div class="input-group">
                     <label><i class="fas fa-chart-pie"></i> 股票投資設定</label>
                     <div class="stock-config">
+                        <!-- 配息投資策略選項 -->
+                        <div class="strategy-options">
+                            <label><i class="fas fa-coins"></i> 配息投資策略</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="dividendStrategy" value="mortgage" checked>
+                                    <span class="radio-custom"></span>
+                                    配息用於還房貸
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="dividendStrategy" value="full0050">
+                                    <span class="radio-custom"></span>
+                                    配息完全投入0050股數
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="dividendStrategy" value="afterMortgage">
+                                    <span class="radio-custom"></span>
+                                    配息扣掉房貸後，餘額投入0050
+                                </label>
+                            </div>
+                        </div>
                         <!-- 0056 卡片 -->
                         <div class="stock-card">
                             <div class="stock-card-header">

@@ -150,45 +150,69 @@ class MortgageCalculator {
             // 每月購買股票
             let monthlyStockCost = 0;
             Object.keys(monthlyPurchase).forEach(stock => {
-                const purchaseAmount = monthlyPurchase[stock];
-                if (purchaseAmount > 0) {
-                    // 只在配息月或每月固定購買
-                    let shouldBuy = false;
-                    if (stock === "0050") {
-                        shouldBuy = true; // 每月固定買入
-                    } else if (this.dividendMonths[stock] && this.dividendMonths[stock].includes(currentMonth)) {
-                        shouldBuy = true; // 配息月買入
-                    }
-                    
-                    if (shouldBuy) {
-                        currentStocks[stock] += purchaseAmount;
-                        monthlyStockCost += purchaseAmount * currentStockPrices[stock] * 1000; // 每張1000股
-                    }
+                if (monthlyPurchase[stock] > 0) {
+                    const cost = monthlyPurchase[stock] * currentStockPrices[stock]; // 直接以股數計算
+                    monthlyStockCost += cost;
+                    totalStockInvestment += cost;
+                    currentStocks[stock] += monthlyPurchase[stock];
                 }
             });
-            
-            totalStockInvestment += monthlyStockCost;
 
             // 計算利息和本金
             const monthlyInterest = remainingBalance * monthlyRate;
             let principalPayment = monthlyPayment - monthlyInterest;
             
+            // 檢查配息再投資策略開關
+            const dividendReinvestToggle = document.getElementById('dividendReinvestToggle');
+            const isDividendReinvestEnabled = dividendReinvestToggle && dividendReinvestToggle.checked;
+
             // 計算配息
             const monthlyDividends = {};
             let totalMonthlyDividend = 0;
+            let highDividendETFDividend = 0; // 高股息ETF配息 (0056, 00878, 00919)
+            let etf0050Dividend = 0; // 0050配息
             
             Object.keys(dividends).forEach(stock => {
                 if (this.dividendMonths[stock] && this.dividendMonths[stock].includes(currentMonth)) {
                     monthlyDividends[stock] = currentStocks[stock] * dividends[stock];
                     totalMonthlyDividend += monthlyDividends[stock];
+                    
+                    // 分類配息來源
+                    if (stock === '0050') {
+                        etf0050Dividend += monthlyDividends[stock];
+                    } else {
+                        highDividendETFDividend += monthlyDividends[stock];
+                    }
                 } else {
                     monthlyDividends[stock] = 0;
                 }
             });
 
-            // 計算實際還款金額
-            const totalAvailablePayment = principalPayment + totalMonthlyDividend;
-            const actualPayment = Math.min(totalAvailablePayment, remainingBalance);
+            // 處理配息再投資策略
+            let dividendForMortgage = totalMonthlyDividend; // 用於還房貸的配息
+            let dividendFor0050Investment = 0; // 用於投資0050的配息
+            
+            if (isDividendReinvestEnabled && highDividendETFDividend > 0) {
+                // 啟用策略：高股息ETF配息投入0050，0050配息用於還房貸
+                dividendFor0050Investment = highDividendETFDividend;
+                dividendForMortgage = etf0050Dividend;
+                
+                // 計算可購買的0050股數
+                const price0050 = currentStockPrices['0050'];
+                if (price0050 > 0) {
+                    const shares0050ToBuy = Math.floor(dividendFor0050Investment / price0050);
+                    if (shares0050ToBuy > 0) {
+                        currentStocks['0050'] += shares0050ToBuy;
+                        const actualInvestment = shares0050ToBuy * price0050;
+                        totalStockInvestment += actualInvestment;
+                        // 剩餘的配息仍用於還房貸
+                        dividendForMortgage += (dividendFor0050Investment - actualInvestment);
+                    }
+                }
+            }
+            
+            // 計算實際還款金額（本金 + 配息）
+            const actualPayment = principalPayment + dividendForMortgage;
             const earlyPayment = Math.max(0, actualPayment - principalPayment);
             
             // 更新餘額
@@ -220,7 +244,10 @@ class MortgageCalculator {
                 monthlyDividends: { ...monthlyDividends },
                 totalDividend: totalMonthlyDividend,
                 monthlyStockCost: monthlyStockCost,
-                totalStockInvestment: totalStockInvestment
+                totalStockInvestment: totalStockInvestment,
+                dividendReinvestEnabled: isDividendReinvestEnabled,
+                dividendFor0050Investment: dividendFor0050Investment || 0,
+                dividendForMortgage: dividendForMortgage || totalMonthlyDividend
             });
 
             // 每年添加一個圖表數據點
@@ -414,10 +441,10 @@ class MortgageCalculator {
                 
                 // 只顯示有配息的月份
                 if (hasDiv) {
-                    // 計算當月總市值
+                    // 計算總市值
                     let totalMarketValue = 0;
                     Object.keys(result.stocks).forEach(stock => {
-                        totalMarketValue += result.stocks[stock] * result.stockPrices[stock] * 1000; // 每張1000股
+                        totalMarketValue += result.stocks[stock] * result.stockPrices[stock]; // 直接以股數計算
                     });
 
                     html += `
@@ -426,29 +453,33 @@ class MortgageCalculator {
                             <div class="${result.monthlyDividends['0056'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}
                                 <br><small style="color: #666; font-size: 0.8em;">
-                                    ${result.stocks['0056']}張 × $${result.stockPrices['0056'].toFixed(1)}
+                                    ${this.formatNumber(result.stocks['0056'])}股 × $${result.stockPrices['0056'].toFixed(1)}
                                 </small>
                             </div>
                             <div class="${result.monthlyDividends['00878'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}
                                 <br><small style="color: #666; font-size: 0.8em;">
-                                    ${result.stocks['00878']}張 × $${result.stockPrices['00878'].toFixed(1)}
+                                    ${this.formatNumber(result.stocks['00878'])}股 × $${result.stockPrices['00878'].toFixed(1)}
                                 </small>
                             </div>
                             <div class="${result.monthlyDividends['0050'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['0050'] > 0 ? this.formatNumber(result.monthlyDividends['0050']) : '-'}
                                 <br><small style="color: #666; font-size: 0.8em;">
-                                    ${result.stocks['0050']}張 × $${result.stockPrices['0050'].toFixed(1)}
+                                    ${this.formatNumber(result.stocks['0050'])}股 × $${result.stockPrices['0050'].toFixed(1)}
                                 </small>
                             </div>
                             <div class="${result.monthlyDividends['00919'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['00919'] > 0 ? this.formatNumber(result.monthlyDividends['00919']) : '-'}
                                 <br><small style="color: #666; font-size: 0.8em;">
-                                    ${result.stocks['00919']}張 × $${result.stockPrices['00919'].toFixed(1)}
+                                    ${this.formatNumber(result.stocks['00919'])}股 × $${result.stockPrices['00919'].toFixed(1)}
                                 </small>
                             </div>
                             <div class="dividend-amount">
                                 ${this.formatCurrency(result.totalDividend)}
+                                ${result.dividendReinvestEnabled && result.dividendFor0050Investment > 0 ? 
+                                    `<br><small style="color: #28a745; font-size: 0.8em;">
+                                        <i class="fas fa-sync-alt"></i> ${this.formatCurrency(result.dividendFor0050Investment)} → 0050
+                                    </small>` : ''}
                             </div>
                             <div class="market-value" style="font-weight: bold; color: #2196f3;">
                                 ${this.formatCurrency(totalMarketValue)}
@@ -645,7 +676,28 @@ function toggleYearDetails(year) {
     }
 }
 
+// 配息再投資策略開關處理
+function toggleDividendStrategy() {
+    const toggle = document.getElementById('dividendReinvestToggle');
+    const description = document.getElementById('strategyDescription');
+    
+    if (toggle.checked) {
+        description.innerHTML = '<strong style="color: #28a745;">啟用</strong>：高股息ETF配息自動投入購買0050';
+    } else {
+        description.innerHTML = '<strong style="color: #6c757d;">關閉</strong>：高股息ETF配息用於還房貸';
+    }
+    
+    // 重新計算
+    calculate();
+}
+
 // 頁面載入時執行初始計算
 document.addEventListener('DOMContentLoaded', function() {
+    // 設置開關事件監聽器
+    const toggle = document.getElementById('dividendReinvestToggle');
+    if (toggle) {
+        toggle.addEventListener('change', toggleDividendStrategy);
+    }
+    
     calculate();
 });

@@ -162,9 +162,14 @@ class MortgageCalculator {
             const monthlyInterest = remainingBalance * monthlyRate;
             let principalPayment = monthlyPayment - monthlyInterest;
             
-            // 檢查配息再投資策略開關
-            const dividendReinvestToggle = document.getElementById('dividendReinvestToggle');
-            const isDividendReinvestEnabled = dividendReinvestToggle && dividendReinvestToggle.checked;
+            // 檢查配息投資策略選項
+            const strategyRadios = document.querySelectorAll('input[name="dividendStrategy"]');
+            let selectedStrategy = 'mortgage'; // 預設值
+            strategyRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedStrategy = radio.value;
+                }
+            });
 
             // 計算配息
             const monthlyDividends = {};
@@ -188,28 +193,47 @@ class MortgageCalculator {
                 }
             });
 
-            // 處理配息再投資策略
+            // 處理配息投資策略
             let dividendForMortgage = totalMonthlyDividend; // 用於還房貸的配息
             let dividendFor0050Investment = 0; // 用於投資0050的配息
             
-            if (isDividendReinvestEnabled && highDividendETFDividend > 0) {
-                // 啟用策略：高股息ETF配息投入0050，0050配息用於還房貸
-                dividendFor0050Investment = highDividendETFDividend;
-                dividendForMortgage = etf0050Dividend;
+            if (selectedStrategy === 'full0050') {
+                // 策略1：配息完全投入0050股數
+                dividendFor0050Investment = totalMonthlyDividend;
+                dividendForMortgage = 0;
                 
                 // 計算可購買的0050股數
                 const price0050 = currentStockPrices['0050'];
-                if (price0050 > 0) {
+                if (price0050 > 0 && dividendFor0050Investment > 0) {
                     const shares0050ToBuy = Math.floor(dividendFor0050Investment / price0050);
                     if (shares0050ToBuy > 0) {
                         currentStocks['0050'] += shares0050ToBuy;
                         const actualInvestment = shares0050ToBuy * price0050;
                         totalStockInvestment += actualInvestment;
                         // 剩餘的配息仍用於還房貸
+                        dividendForMortgage = dividendFor0050Investment - actualInvestment;
+                    }
+                }
+            } else if (selectedStrategy === 'afterMortgage') {
+                // 策略2：配息扣掉房貸後，餘額投入0050
+                const mortgagePayment = Math.min(totalMonthlyDividend, principalPayment);
+                dividendForMortgage = mortgagePayment;
+                dividendFor0050Investment = totalMonthlyDividend - mortgagePayment;
+                
+                // 計算可購買的0050股數
+                const price0050 = currentStockPrices['0050'];
+                if (price0050 > 0 && dividendFor0050Investment > 0) {
+                    const shares0050ToBuy = Math.floor(dividendFor0050Investment / price0050);
+                    if (shares0050ToBuy > 0) {
+                        currentStocks['0050'] += shares0050ToBuy;
+                        const actualInvestment = shares0050ToBuy * price0050;
+                        totalStockInvestment += actualInvestment;
+                        // 剩餘的配息加回房貸還款
                         dividendForMortgage += (dividendFor0050Investment - actualInvestment);
                     }
                 }
             }
+            // 預設策略 (mortgage)：配息用於還房貸，無需額外處理
             
             // 計算實際還款金額（本金 + 配息）
             const actualPayment = principalPayment + dividendForMortgage;
@@ -245,7 +269,7 @@ class MortgageCalculator {
                 totalDividend: totalMonthlyDividend,
                 monthlyStockCost: monthlyStockCost,
                 totalStockInvestment: totalStockInvestment,
-                dividendReinvestEnabled: isDividendReinvestEnabled,
+                dividendStrategy: selectedStrategy,
                 dividendFor0050Investment: dividendFor0050Investment || 0,
                 dividendForMortgage: dividendForMortgage || totalMonthlyDividend
             });
@@ -476,7 +500,7 @@ class MortgageCalculator {
                             </div>
                             <div class="dividend-amount">
                                 ${this.formatCurrency(result.totalDividend)}
-                                ${result.dividendReinvestEnabled && result.dividendFor0050Investment > 0 ? 
+                                ${result.dividendStrategy !== 'mortgage' && result.dividendFor0050Investment > 0 ? 
                                     `<br><small style="color: #28a745; font-size: 0.8em;">
                                         <i class="fas fa-sync-alt"></i> ${this.formatCurrency(result.dividendFor0050Investment)} → 0050
                                     </small>` : ''}
@@ -676,28 +700,19 @@ function toggleYearDetails(year) {
     }
 }
 
-// 配息再投資策略開關處理
-function toggleDividendStrategy() {
-    const toggle = document.getElementById('dividendReinvestToggle');
-    const description = document.getElementById('strategyDescription');
-    
-    if (toggle.checked) {
-        description.innerHTML = '<strong style="color: #28a745;">啟用</strong>：高股息ETF配息自動投入購買0050';
-    } else {
-        description.innerHTML = '<strong style="color: #6c757d;">關閉</strong>：高股息ETF配息用於還房貸';
-    }
-    
+// 配息投資策略選項處理
+function handleDividendStrategyChange() {
     // 重新計算
     calculate();
 }
 
 // 頁面載入時執行初始計算
 document.addEventListener('DOMContentLoaded', function() {
-    // 設置開關事件監聽器
-    const toggle = document.getElementById('dividendReinvestToggle');
-    if (toggle) {
-        toggle.addEventListener('change', toggleDividendStrategy);
-    }
+    // 設置策略選項事件監聽器
+    const strategyRadios = document.querySelectorAll('input[name="dividendStrategy"]');
+    strategyRadios.forEach(radio => {
+        radio.addEventListener('change', handleDividendStrategyChange);
+    });
     
     calculate();
 });

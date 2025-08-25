@@ -395,13 +395,31 @@ class MortgageCalculator {
                 if (hasDiv) {
                     html += `
                         <div class="monthly-detail-row dividend-month">
-                            <div class="monthly-row-header">
+                            <div>${result.currentMonth}月</div>
+                            <div class="${result.monthlyDividends['0056'] > 0 ? 'dividend-amount' : 'no-dividend'}">
+                                ${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}
+                            </div>
+                            <div class="${result.monthlyDividends['00878'] > 0 ? 'dividend-amount' : 'no-dividend'}">
+                                ${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}
+                            </div>
+                            <div class="${result.monthlyDividends['00712'] > 0 ? 'dividend-amount' : 'no-dividend'}">
+                                ${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}
+                            </div>
+                            <div class="${result.monthlyDividends['00919'] > 0 ? 'dividend-amount' : 'no-dividend'}">
+                                ${result.monthlyDividends['00919'] > 0 ? this.formatNumber(result.monthlyDividends['00919']) : '-'}
+                            </div>
+                            <div class="dividend-amount">
+                                ${this.formatCurrency(result.totalDividend)}
+                            </div>
+                            
+                            <!-- 手機版布局 -->
+                            <div class="monthly-row-header" style="display: none;">
                                 <span>${result.currentMonth}月</span>
                                 <span class="dividend-amount">
                                     ${this.formatCurrency(result.totalDividend)}
                                 </span>
                             </div>
-                            <div class="monthly-stocks-grid">
+                            <div class="monthly-stocks-grid" style="display: none;">
                                 <div class="stock-dividend-item ${result.monthlyDividends['0056'] > 0 ? 'has-dividend' : ''}">
                                     <span>0056</span>
                                     <span>${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}</span>

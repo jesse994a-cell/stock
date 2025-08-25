@@ -384,6 +384,7 @@ class MortgageCalculator {
                         <div>00712</div>
                         <div>00919</div>
                         <div>總配息</div>
+                        <div>總市值</div>
                     </div>
             `;
             
@@ -393,23 +394,47 @@ class MortgageCalculator {
                 
                 // 只顯示有配息的月份
                 if (hasDiv) {
+                    // 計算當月總市值
+                    let totalMarketValue = 0;
+                    Object.keys(result.stocks).forEach(stock => {
+                        totalMarketValue += result.stocks[stock] * result.stockPrices[stock] * 1000; // 每張1000股
+                    });
+
                     html += `
                         <div class="monthly-detail-row dividend-month">
                             <div>${result.currentMonth}月</div>
                             <div class="${result.monthlyDividends['0056'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}
+                                <br><small style="color: #666; font-size: 0.8em;">
+                                    ${result.stocks['0056']}張 × $${result.stockPrices['0056'].toFixed(1)}
+                                </small>
                             </div>
                             <div class="${result.monthlyDividends['00878'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}
+                                <br><small style="color: #666; font-size: 0.8em;">
+                                    ${result.stocks['00878']}張 × $${result.stockPrices['00878'].toFixed(1)}
+                                </small>
                             </div>
                             <div class="${result.monthlyDividends['00712'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}
+                                <br><small style="color: #666; font-size: 0.8em;">
+                                    ${result.stocks['00712']}張 × $${result.stockPrices['00712'].toFixed(1)}
+                                </small>
                             </div>
                             <div class="${result.monthlyDividends['00919'] > 0 ? 'dividend-amount' : 'no-dividend'}">
                                 ${result.monthlyDividends['00919'] > 0 ? this.formatNumber(result.monthlyDividends['00919']) : '-'}
+                                <br><small style="color: #666; font-size: 0.8em;">
+                                    ${result.stocks['00919']}張 × $${result.stockPrices['00919'].toFixed(1)}
+                                </small>
                             </div>
                             <div class="dividend-amount">
                                 ${this.formatCurrency(result.totalDividend)}
+                            </div>
+                            <div class="market-value" style="font-weight: bold; color: #2196f3;">
+                                ${this.formatCurrency(totalMarketValue)}
+                                <br><small style="color: #666; font-size: 0.8em;">
+                                    ${this.formatNumber(totalMarketValue / 10000)}萬
+                                </small>
                             </div>
                             
                             <!-- 手機版布局 -->
@@ -421,21 +446,24 @@ class MortgageCalculator {
                             </div>
                             <div class="monthly-stocks-grid" style="display: none;">
                                 <div class="stock-dividend-item ${result.monthlyDividends['0056'] > 0 ? 'has-dividend' : ''}">
-                                    <span>0056</span>
+                                    <span>0056 (${result.stocks['0056']}張)</span>
                                     <span>${result.monthlyDividends['0056'] > 0 ? this.formatNumber(result.monthlyDividends['0056']) : '-'}</span>
                                 </div>
                                 <div class="stock-dividend-item ${result.monthlyDividends['00878'] > 0 ? 'has-dividend' : ''}">
-                                    <span>00878</span>
+                                    <span>00878 (${result.stocks['00878']}張)</span>
                                     <span>${result.monthlyDividends['00878'] > 0 ? this.formatNumber(result.monthlyDividends['00878']) : '-'}</span>
                                 </div>
                                 <div class="stock-dividend-item ${result.monthlyDividends['00712'] > 0 ? 'has-dividend' : ''}">
-                                    <span>00712</span>
+                                    <span>00712 (${result.stocks['00712']}張)</span>
                                     <span>${result.monthlyDividends['00712'] > 0 ? this.formatNumber(result.monthlyDividends['00712']) : '-'}</span>
                                 </div>
                                 <div class="stock-dividend-item ${result.monthlyDividends['00919'] > 0 ? 'has-dividend' : ''}">
-                                    <span>00919</span>
+                                    <span>00919 (${result.stocks['00919']}張)</span>
                                     <span>${result.monthlyDividends['00919'] > 0 ? this.formatNumber(result.monthlyDividends['00919']) : '-'}</span>
                                 </div>
+                            </div>
+                            <div class="monthly-total" style="display: none;">
+                                總市值: ${this.formatCurrency(totalMarketValue)} (${this.formatNumber(totalMarketValue / 10000)}萬)
                             </div>
                         </div>
                     `;

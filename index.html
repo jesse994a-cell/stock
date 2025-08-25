@@ -205,6 +205,66 @@
             background: white;
         }
 
+        /* 配息投資策略 - 全域自訂單選樣式（避免桌機也出現原生radio跑版）*/
+        .strategy-options {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .strategy-options > label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            white-space: normal;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .radio-option:hover { background-color: rgba(0, 123, 255, 0.06); }
+        .radio-option input[type="radio"] { display: none; }
+        .radio-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.2s;
+            flex: 0 0 18px;
+        }
+        .radio-option input:checked + .radio-custom {
+            border-color: #007bff;
+            background-color: #007bff;
+        }
+        .radio-option input:checked + .radio-custom:after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -475,11 +535,9 @@
             }
             
             .summary-cards {
+                display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                display: flex;
-                align-items: center;
                 gap: 10px;
-                font-weight: 600;
             }
 
             .expand-icon {
@@ -491,72 +549,8 @@
                 transform: rotate(90deg);
             }
 
-            .strategy-options {
-                margin: 15px 0;
-                padding: 15px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                border: 1px solid #e9ecef;
-            }
-            
-            .strategy-options > label {
-                display: block;
-                font-weight: 600;
-                color: #495057;
-                margin-bottom: 12px;
-                font-size: 1rem;
-            }
-            
-            .radio-group {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .radio-option {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                padding: 8px 12px;
-                border-radius: 6px;
-                transition: background-color 0.2s;
-                font-size: 0.9rem;
-            }
-            
-            .radio-option:hover {
-                background-color: rgba(0, 123, 255, 0.1);
-            }
-            
-            .radio-option input[type="radio"] {
-                display: none;
-            }
-            
-            .radio-custom {
-                width: 18px;
-                height: 18px;
-                border: 2px solid #dee2e6;
-                border-radius: 50%;
-                margin-right: 10px;
-                position: relative;
-                transition: all 0.2s;
-            }
-            
-            .radio-option input:checked + .radio-custom {
-                border-color: #007bff;
-                background-color: #007bff;
-            }
-            
-            .radio-option input:checked + .radio-custom:after {
-                content: '';
-                position: absolute;
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background: white;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
+            /* 表格在手機上允許水平滾動，避免擠壓 */
+            .table-container { overflow-x: auto; }
 
             .monthly-details {
                 display: none;

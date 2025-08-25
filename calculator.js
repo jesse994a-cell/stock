@@ -36,9 +36,18 @@ class MortgageCalculator {
     calculate() {
         try {
             // 獲取輸入參數並驗證
-            const loanAmountInput = document.getElementById('loanAmount').value;
-            const annualRateInput = document.getElementById('interestRate').value;
-            const loanYearsInput = document.getElementById('loanYears').value;
+            const loanAmountElement = document.getElementById('loanAmount');
+            const annualRateElement = document.getElementById('interestRate');
+            const loanYearsElement = document.getElementById('loanYears');
+            
+            if (!loanAmountElement || !annualRateElement || !loanYearsElement) {
+                console.error('基本輸入元素未找到');
+                return;
+            }
+            
+            const loanAmountInput = loanAmountElement.value;
+            const annualRateInput = annualRateElement.value;
+            const loanYearsInput = loanYearsElement.value;
             
             if (!loanAmountInput || !annualRateInput || !loanYearsInput) {
                 alert('請填入所有必要參數');
@@ -55,39 +64,50 @@ class MortgageCalculator {
                 return;
             }
         
+        // 安全獲取股票參數
+        const getElementValue = (id, defaultValue = 0, isFloat = false) => {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`元素 ${id} 未找到，使用預設值 ${defaultValue}`);
+                return defaultValue;
+            }
+            const value = isFloat ? parseFloat(element.value) : parseInt(element.value);
+            return isNaN(value) ? defaultValue : value;
+        };
+
         const initialStocks = {
-            "0056": parseInt(document.getElementById('initial0056').value) || 0,
-            "00878": parseInt(document.getElementById('initial00878').value) || 0,
-            "0050": parseInt(document.getElementById('initial0050').value) || 0,
-            "00919": parseInt(document.getElementById('initial00919').value) || 0
+            "0056": getElementValue('initial0056'),
+            "00878": getElementValue('initial00878'),
+            "0050": getElementValue('initial0050'),
+            "00919": getElementValue('initial00919')
         };
         
         const monthlyPurchase = {
-            "0056": parseInt(document.getElementById('monthly0056').value) || 0,
-            "00878": parseInt(document.getElementById('monthly00878').value) || 0,
-            "0050": parseInt(document.getElementById('monthly0050').value) || 0,
-            "00919": parseInt(document.getElementById('monthly00919').value) || 0
+            "0056": getElementValue('monthly0056'),
+            "00878": getElementValue('monthly00878'),
+            "0050": getElementValue('monthly0050'),
+            "00919": getElementValue('monthly00919')
         };
         
         const stockPrices = {
-            "0056": parseFloat(document.getElementById('price0056').value) || 0,
-            "00878": parseFloat(document.getElementById('price00878').value) || 0,
-            "0050": parseFloat(document.getElementById('price0050').value) || 0,
-            "00919": parseFloat(document.getElementById('price00919').value) || 0
+            "0056": getElementValue('price0056', 0, true),
+            "00878": getElementValue('price00878', 0, true),
+            "0050": getElementValue('price0050', 0, true),
+            "00919": getElementValue('price00919', 0, true)
         };
         
         const annualGrowth = {
-            "0056": (parseFloat(document.getElementById('growth0056').value) || 0) / 100,
-            "00878": (parseFloat(document.getElementById('growth00878').value) || 0) / 100,
-            "0050": (parseFloat(document.getElementById('growth0050').value) || 0) / 100,
-            "00919": (parseFloat(document.getElementById('growth00919').value) || 0) / 100
+            "0056": getElementValue('growth0056', 0, true) / 100,
+            "00878": getElementValue('growth00878', 0, true) / 100,
+            "0050": getElementValue('growth0050', 0, true) / 100,
+            "00919": getElementValue('growth00919', 0, true) / 100
         };
         
         const dividends = {
-            "0056": parseFloat(document.getElementById('div0056').value) || 0,
-            "00878": parseFloat(document.getElementById('div00878').value) || 0,
-            "0050": parseFloat(document.getElementById('div0050').value) || 0,
-            "00919": parseFloat(document.getElementById('div00919').value) || 0
+            "0056": getElementValue('div0056', 0, true),
+            "00878": getElementValue('div00878', 0, true),
+            "0050": getElementValue('div0050', 0, true),
+            "00919": getElementValue('div00919', 0, true)
         };
 
         // 計算基本參數
